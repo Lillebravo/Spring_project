@@ -1,13 +1,14 @@
 package com.jerry.school_project.entity;
 
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
+    @Column(name = "user_id", columnDefinition = "INTEGER")
     private Long id;
 
     @Column(name = "first_name")
@@ -23,7 +24,7 @@ public class User {
     private String password;
 
     @Column(name = "registration_date")
-    private String registrationDate;
+    private LocalDateTime registrationDate;
 
     // Default constructor
     public User() {
@@ -65,10 +66,10 @@ public class User {
         this.password = password;
     }
 
-    public String getRegistrationDate() {
+    public LocalDateTime getRegistrationDate() {
         return registrationDate;
     }
-    public void setRegistrationDate(String registrationDate) {
+    public void setRegistrationDate(LocalDateTime registrationDate) {
         this.registrationDate = registrationDate;
     }
 }

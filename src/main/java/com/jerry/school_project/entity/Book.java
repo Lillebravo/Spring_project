@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "book_id")  // Måste matcha kolumnnamnet i DB
+    @Column(name = "book_id", columnDefinition = "INTEGER")  // Måste matcha kolumnnamnet i DB
     private Long id;
 
     @Column(name = "title")
@@ -22,7 +22,7 @@ public class Book {
     @Column(name = "total_copies")
     private Integer totalCopies;
 
-    @Column(name = "author_id")
+    @Column(name = "author_id", columnDefinition = "INTEGER")
     private Long authorId;
 
     // Default constructor demanded by JPA

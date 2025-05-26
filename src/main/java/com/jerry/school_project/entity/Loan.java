@@ -1,29 +1,30 @@
 package com.jerry.school_project.entity;
 
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "loans")
 public class Loan {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "loan_id")
+    @Column(name = "loan_id", columnDefinition = "INTEGER")
     private Long id;
 
-    @Column(name = "user_id")
+    @Column(name = "user_id", columnDefinition = "INTEGER")
     private Long userId;
 
-    @Column(name = "book_id")
+    @Column(name = "book_id", columnDefinition = "INTEGER")
     private Long bookId;
 
     @Column(name = "borrowed_date")
-    private String borrowedDate;
+    private LocalDateTime borrowedDate;
 
     @Column(name = "due_date")
-    private String dueDate;
+    private LocalDateTime dueDate;
 
     @Column(name = "returned_date")
-    private String returnedDate;
+    private LocalDateTime returnedDate;
 
     // Default constructor
     public Loan() {
@@ -51,24 +52,24 @@ public class Loan {
         this.bookId = bookId;
     }
 
-    public String getBorrowedDate() {
+    public LocalDateTime getBorrowedDate() {
         return borrowedDate;
     }
-    public void setBorrowedDate(String borrowedDate) {
+    public void setBorrowedDate(LocalDateTime borrowedDate) {
         this.borrowedDate = borrowedDate;
     }
 
-    public String getDueDate() {
+    public LocalDateTime getDueDate() {
         return dueDate;
     }
-    public void setDueDate(String dueDate) {
+    public void setDueDate(LocalDateTime dueDate) {
         this.dueDate = dueDate;
     }
 
-    public String getReturnedDate() {
+    public LocalDateTime getReturnedDate() {
         return returnedDate;
     }
-    public void setReturnedDate(String returnedDate) {
+    public void setReturnedDate(LocalDateTime returnedDate) {
         this.returnedDate = returnedDate;
     }
 }
