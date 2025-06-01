@@ -2,6 +2,7 @@ package com.jerry.school_project.entity;
 
 import jakarta.persistence.*;
 
+// add relationships one to one, one to many
 @Entity
 @Table(name = "books")  // Måste matcha tabellnamnet i databasen
 public class Book {
