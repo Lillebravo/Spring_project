@@ -33,7 +33,7 @@ public class Validation {
         }
 
         if (allowSpecialChars) {
-            regex.append("\\s\\-'.,!?");
+            regex.append("\\s\\-'.#,!?@¤#$%^&*()_+=\\[\\]{}|:;<>/~`");
         } else {
             regex.append(" ");
         }
@@ -61,9 +61,9 @@ public class Validation {
         validateString(value, fieldName, required, true, false, null);
     }
 
-    // Validate string with special characters allowed
+    // Validate string with special characters and numbers allowed
     public void validateStringWithSpecialChars(String value, String fieldName, boolean required) {
-        validateString(value, fieldName, required, false, true, null);
+        validateString(value, fieldName, required, true, true, null);
     }
 
 
@@ -96,7 +96,7 @@ public class Validation {
         }
     }
 
-    // Validate int with default settings (required, no min/max)
+    // Validate int with default settings (required, 0 min/no max)
     public void validateInteger(Integer value, String fieldName) {
         validateInteger(value, fieldName, true, 0, null, null);
     }

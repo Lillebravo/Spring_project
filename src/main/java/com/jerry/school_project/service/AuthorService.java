@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class AuthorService {
@@ -32,24 +31,29 @@ public class AuthorService {
 
     // Find authors by last name
     public List<Author> findAuthorsByLastName(String lastName) {
+        if (lastName == null || lastName.trim().isEmpty()) {
+            throw new IllegalArgumentException("Last name cannot be empty");
+        }
+
         try {
-            if (lastName == null || lastName.trim().isEmpty()) {
-                return new ArrayList<>();
-            }
-            return authorRepository.findByLastName(lastName.trim());
+            return authorRepository.findByLastNameContainingIgnoreCase(lastName.trim());
         } catch (Exception e) {
-            return new ArrayList<>();
+            throw new RuntimeException("Database error occurred while searching for authors", e);
         }
     }
 
     // Add a new author
-    public Optional<Author> addAuthor(Author author) {
+    public Author addAuthor(Author author) {
+        if (author == null) {
+            throw new IllegalArgumentException("Author data is required");
+        }
+
         try {
             String firstName = author.getFirstName() != null ? author.getFirstName().trim() : null;
             String lastName = author.getLastName() != null ? author.getLastName().trim() : null;
             String nationality = author.getNationality() != null ? author.getNationality().trim() : null;
 
-            // Validate all required fields using ValidationUtils
+            // Validation
             validation.validateString(firstName, "First name");
             validation.validateString(lastName, "Last name");
             validation.validateString(nationality, "Nationality");
@@ -60,13 +64,17 @@ public class AuthorService {
                 throw new IllegalArgumentException("An author with this first name and last name already exists");
             }
 
-            Author savedAuthor = authorRepository.save(author);
-            return Optional.of(savedAuthor);
+            // Set the trimmed values back to the author object
+            author.setFirstName(firstName);
+            author.setLastName(lastName);
+            author.setNationality(nationality);
+
+            return authorRepository.save(author);
 
         } catch (IllegalArgumentException e) {
             throw e;
         } catch (Exception e) {
-            return Optional.empty();
+            throw new RuntimeException("Failed to create author due to system error", e);
         }
     }
 }

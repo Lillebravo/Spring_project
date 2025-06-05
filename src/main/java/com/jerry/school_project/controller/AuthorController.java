@@ -3,13 +3,10 @@ package com.jerry.school_project.controller;
 import com.jerry.school_project.entity.Author;
 import com.jerry.school_project.service.AuthorService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/authors")
@@ -30,18 +27,9 @@ public class AuthorController {
     public ResponseEntity<?> getAllAuthors() {
         try {
             List<Author> authors = authorService.getAllAuthors();
-
-            return ResponseEntity.ok(Map.of(
-                    "status", "success",
-                    "total", authors.size(),
-                    "authors", authors
-            ));
-
+            return ResponseEntity.status(200).body(authors);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
-                    "status", "error",
-                    "message", "Server error occurred while retrieving authors"
-            ));
+            return ResponseEntity.status(500).body("Server error occurred while retrieving authors");
         }
     }
 
@@ -52,33 +40,17 @@ public class AuthorController {
     @GetMapping("/name/{lastName}")
     public ResponseEntity<?> findAuthorsByLastName(@PathVariable String lastName) {
         try {
-            if (lastName == null || lastName.trim().isEmpty()) {
-                return ResponseEntity.badRequest().body(Map.of(
-                        "status", "error",
-                        "message", "Last name cannot be empty"
-                ));
-            }
-
             List<Author> authors = authorService.findAuthorsByLastName(lastName);
 
             if (authors.isEmpty()) {
-                return ResponseEntity.ok(Map.of(
-                        "status", "not found",
-                        "message", "No authors found with last name containing '" + lastName + "'"
-                ));
+                return ResponseEntity.status(404).body("No authors found with last name: " + lastName);
             }
 
-            return ResponseEntity.ok(Map.of(
-                    "status", "success",
-                    "total", authors.size(),
-                    "authors", authors
-            ));
-
+            return ResponseEntity.status(200).body(authors);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(400).body(e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
-                    "status", "error",
-                    "message", "An unexpected error occurred: " + e.getMessage()
-            ));
+            return ResponseEntity.status(500).body("Server error occurred while searching for authors");
         }
     }
 
@@ -89,38 +61,12 @@ public class AuthorController {
     @PostMapping
     public ResponseEntity<?> addAuthor(@RequestBody Author author) {
         try {
-            if (author == null) {
-                return ResponseEntity.badRequest().body(Map.of(
-                        "status", "error",
-                        "message", "Author data is required"
-                ));
-            }
-
-            Optional<Author> result = authorService.addAuthor(author);
-
-            if (result.isPresent()) {
-                return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
-                        "status", "success",
-                        "message", "Author created successfully",
-                        "author", result.get()
-                ));
-            } else {
-                return ResponseEntity.badRequest().body(Map.of(
-                        "status", "error",
-                        "message", "Failed to create author. Please check your input data."
-                ));
-            }
-
+            Author createdAuthor = authorService.addAuthor(author);
+            return ResponseEntity.status(201).body(createdAuthor);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(Map.of(
-                    "status", "error",
-                    "message", e.getMessage()
-            ));
+            return ResponseEntity.status(400).body(e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
-                    "status", "error",
-                    "message", "An unexpected error occurred while creating the author: " + e.getMessage()
-            ));
+            return ResponseEntity.status(500).body("Server error occurred while creating the author");
         }
     }
 }

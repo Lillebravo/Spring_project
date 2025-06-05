@@ -39,59 +39,61 @@ public class BookService {
 
     // Search books by title or author name
     public List<BookWithDetailsDTO> searchBooks(String query) {
+        if (query == null || query.trim().isEmpty()) {
+            throw new IllegalArgumentException("Search query cannot be empty");
+        }
+
         try {
-            if (query == null || query.trim().isEmpty()) {
-                return new ArrayList<>();
-            }
             List<Book> books = bookRepository.searchBooksByTitleOrAuthor(query.trim());
             return convertBookListToDTO(books);
         } catch (Exception e) {
-            return new ArrayList<>();
+            throw new RuntimeException("Failed to search books", e);
         }
     }
 
-    // Add a new book
-    public Optional<BookWithDetailsDTO> addBook(Book book) {
+    // Add new book
+    public BookWithDetailsDTO addBook(Book book) {
+        if (book == null) {
+            throw new IllegalArgumentException("Book data is required");
+        }
+
+        String title = book.getTitle() != null ? book.getTitle().trim() : null;
+
+        // Validation
+        validation.validateStringWithSpecialChars(title, "Book title", true);
+        validation.validateLong(book.getAuthorId(), "Author ID", 1L, null);
+        validation.validateInteger(book.getAvailableCopies(), "Available copies");
+        validation.validateInteger(book.getTotalCopies(), "Total copies");
+        validation.validatePublicationYear(book.getPublicationYear());
+
+        // Validate that the author exists
+        Optional<Author> authorOpt = authorRepository.findById(book.getAuthorId());
+        if (authorOpt.isEmpty()) {
+            throw new IllegalArgumentException("Author with ID " + book.getAuthorId() + " does not exist");
+        }
+
+        // Set available copies to total copies if not specified
+        if (book.getAvailableCopies() == null) {
+            book.setAvailableCopies(book.getTotalCopies());
+        }
+
+        // Validate relationship between available and total copies
+        validation.validateIntegerRelationship(book.getAvailableCopies(), book.getTotalCopies(),
+                "Available copies", "total copies", "not_exceed");
+
+        // Check if book already exists with same title and author
+        if (bookRepository.existsByTitleAndAuthorId(title, book.getAuthorId())) {
+            throw new IllegalArgumentException("A book with this title and author already exists");
+        }
+
         try {
-            String title = book.getTitle() != null ? book.getTitle().trim() : null;
-
-            // Validate all required fields
-            validation.validateStringWithSpecialChars(title, "Book title", true);
-            validation.validateLong(book.getAuthorId(), "Author ID", 1L, null);
-            validation.validateInteger(book.getAvailableCopies(), "Available copies");
-            validation.validateInteger(book.getTotalCopies(), "Total copies");
-            validation.validatePublicationYear(book.getPublicationYear());
-
-            // Validate that the author exists
-            Optional<Author> authorOpt = authorRepository.findById(book.getAuthorId());
-            if (authorOpt.isEmpty()) {
-                throw new IllegalArgumentException("Author with ID " + book.getAuthorId() + " does not exist");
-            }
-
-            // Set available copies to total copies if not specified
-            if (book.getAvailableCopies() == null) {
-                book.setAvailableCopies(book.getTotalCopies());
-            }
-
-            // Validate relationship between available and total copies
-            validation.validateIntegerRelationship(book.getAvailableCopies(), book.getTotalCopies(),
-                    "Available copies", "total copies", "not_exceed");
-
-            // Check if book already exists with same title and author
-            if (bookRepository.existsByTitleAndAuthorId(title, book.getAuthorId())) {
-                throw new IllegalArgumentException("A book with this title and author already exists");
-            }
-
             Book savedBook = bookRepository.save(book);
             Author author = authorOpt.get();
-            BookWithDetailsDTO bookDTO = bookMapper.toBookWithDetailsDTO(savedBook, author);
-
-            return Optional.of(bookDTO);
-
+            return bookMapper.toBookWithDetailsDTO(savedBook, author);
         } catch (IllegalArgumentException e) {
             throw e;
         } catch (Exception e) {
-            return Optional.empty();
+            throw new RuntimeException("Failed to create book due to system error", e);
         }
     }
 
@@ -101,16 +103,20 @@ public class BookService {
             return new ArrayList<>();
         }
 
-        // Get all unique author IDs
-        List<Long> authorIds = books.stream()
-                .map(Book::getAuthorId)
-                .distinct()
-                .collect(java.util.stream.Collectors.toList());
+        try {
+            // Get all unique author IDs
+            List<Long> authorIds = books.stream()
+                    .map(Book::getAuthorId)
+                    .distinct()
+                    .collect(java.util.stream.Collectors.toList());
 
-        // Get all authors
-        List<Author> authors = authorRepository.findAllById(authorIds);
+            // Get all authors
+            List<Author> authors = authorRepository.findAllById(authorIds);
 
-        // Convert using mapper
-        return bookMapper.toBookWithDetailsDTOList(books, authors);
+            // Convert using mapper
+            return bookMapper.toBookWithDetailsDTOList(books, authors);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to convert books to DTOs", e);
+        }
     }
 }

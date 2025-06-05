@@ -11,9 +11,7 @@ import java.util.stream.Collectors;
 @Component
 public class BookMapper {
 
-    /**
-     * Convert a Book entity with Author entity to BookWithDetailsDTO
-     */
+    // Convert a Book entity with Author entity to BookWithDetailsDTO
     public BookWithDetailsDTO toBookWithDetailsDTO(Book book, Author author) {
         if (book == null) {
             return null;
@@ -43,9 +41,7 @@ public class BookMapper {
         );
     }
 
-    /**
-     * Convert a list of Book entities with their corresponding Author entities to BookWithDetailsDTO list
-     */
+    // Convert a list of Book entities with their corresponding Author entities to BookWithDetailsDTO list
     public List<BookWithDetailsDTO> toBookWithDetailsDTOList(List<Book> books, List<Author> authors) {
         if (books == null || books.isEmpty()) {
             return List.of();

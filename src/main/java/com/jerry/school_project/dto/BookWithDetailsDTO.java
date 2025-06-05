@@ -1,5 +1,6 @@
 package com.jerry.school_project.dto;
 
+// DTO for displaying book with author details
 public class BookWithDetailsDTO {
     private Long id;
     private String title;
@@ -11,10 +12,8 @@ public class BookWithDetailsDTO {
     private Integer authorBirthYear;
     private String authorNationality;
 
-    // Default constructor
     public BookWithDetailsDTO() {}
 
-    // Constructor
     public BookWithDetailsDTO(Long id, String title, Integer publicationYear, Integer availableCopies,
                               Integer totalCopies, Long authorId, String authorName,
                               Integer authorBirthYear, String authorNationality) {

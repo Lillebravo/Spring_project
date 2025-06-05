@@ -26,50 +26,42 @@ public class Loan {
     @Column(name = "returned_date")
     private LocalDateTime returnedDate;
 
-    // Default constructor
+    // Relationships - One user can have many loans and many loans can reference 1 book
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "book_id", insertable = false, updatable = false)
+    private Book book;
+
     public Loan() {
     }
 
     // Getters and setters
-    public Long getId() {
-        return id;
-    }
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public Long getUserId() {
-        return userId;
-    }
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
+    public Long getUserId() { return userId; }
+    public void setUserId(Long userId) { this.userId = userId; }
 
-    public Long getBookId() {
-        return bookId;
-    }
-    public void setBookId(Long bookId) {
-        this.bookId = bookId;
-    }
+    public Long getBookId() { return bookId; }
+    public void setBookId(Long bookId) { this.bookId = bookId; }
 
-    public LocalDateTime getBorrowedDate() {
-        return borrowedDate;
-    }
-    public void setBorrowedDate(LocalDateTime borrowedDate) {
-        this.borrowedDate = borrowedDate;
-    }
+    public LocalDateTime getBorrowedDate() { return borrowedDate; }
+    public void setBorrowedDate(LocalDateTime borrowedDate) { this.borrowedDate = borrowedDate; }
 
-    public LocalDateTime getDueDate() {
-        return dueDate;
-    }
-    public void setDueDate(LocalDateTime dueDate) {
-        this.dueDate = dueDate;
-    }
+    public LocalDateTime getDueDate() { return dueDate; }
+    public void setDueDate(LocalDateTime dueDate) { this.dueDate = dueDate; }
 
-    public LocalDateTime getReturnedDate() {
-        return returnedDate;
-    }
+    public LocalDateTime getReturnedDate() { return returnedDate; }
     public void setReturnedDate(LocalDateTime returnedDate) {
         this.returnedDate = returnedDate;
     }
+
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
+
+    public Book getBook() { return book; }
+    public void setBook(Book book) { this.book = book; }
 }

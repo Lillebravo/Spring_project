@@ -2,13 +2,14 @@ package com.jerry.school_project.entity;
 
 import jakarta.persistence.*;
 
-// add relationships one to one, one to many
+import java.util.List;
+
 @Entity
-@Table(name = "books")  // Måste matcha tabellnamnet i databasen
+@Table(name = "books")
 public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "book_id", columnDefinition = "INTEGER")  // Måste matcha kolumnnamnet i DB
+    @Column(name = "book_id", columnDefinition = "INTEGER")
     private Long id;
 
     @Column(name = "title")
@@ -26,7 +27,10 @@ public class Book {
     @Column(name = "author_id", columnDefinition = "INTEGER")
     private Long authorId;
 
-    // Default constructor demanded by JPA
+    // Relationships - One book can have many loans
+    @OneToMany(mappedBy = "book", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Loan> loans;
+
     public Book() {
     }
 
@@ -66,10 +70,9 @@ public class Book {
         this.totalCopies = totalCopies;
     }
 
-    public Long getAuthorId() {
-        return authorId;
-    }
-    public void setAuthorId(Long authorId) {
-        this.authorId = authorId;
-    }
+    public Long getAuthorId() { return authorId; }
+    public void setAuthorId(Long authorId) { this.authorId = authorId; }
+
+    public List<Loan> getLoans() { return loans; }
+    public void setLoans(List<Loan> loans) { this.loans = loans; }
 }
