@@ -22,7 +22,6 @@ public class LoanMapper {
 
         return new UserLoanDTO(
                 loan.getId(),
-                book.getId(),
                 book.getTitle(),
                 author.getFullName(),
                 loan.getBorrowedDate(),
@@ -41,7 +40,6 @@ public class LoanMapper {
                 loan.getId(),
                 user.getId(),
                 user.getFullName(),
-                book.getId(),
                 book.getTitle(),
                 author.getFullName(),
                 loan.getBorrowedDate(),

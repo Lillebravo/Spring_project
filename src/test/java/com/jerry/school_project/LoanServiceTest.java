@@ -86,7 +86,6 @@ class LoanServiceTest {
         testLoanDetailsDTO = new LoanDetailsDTO();
         testLoanDetailsDTO.setLoanId(1L);
         testLoanDetailsDTO.setUserId(1L);
-        testLoanDetailsDTO.setBookId(1L);
         testLoanDetailsDTO.setBorrowedDate(LocalDateTime.now());
         testLoanDetailsDTO.setDueDate(LocalDateTime.now().plusDays(14));
     }

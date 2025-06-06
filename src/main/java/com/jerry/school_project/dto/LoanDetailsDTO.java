@@ -7,7 +7,6 @@ public class LoanDetailsDTO {
     private Long loanId;
     private Long userId;
     private String userFullName;
-    private Long bookId;
     private String bookTitle;
     private String authorName;
     private LocalDateTime borrowedDate;
@@ -18,13 +17,12 @@ public class LoanDetailsDTO {
 
     public LoanDetailsDTO() {}
 
-    public LoanDetailsDTO(Long loanId, Long userId, String userFullName, Long bookId,
+    public LoanDetailsDTO(Long loanId, Long userId, String userFullName,
                           String bookTitle, String authorName, LocalDateTime borrowedDate,
                           LocalDateTime dueDate, LocalDateTime returnedDate) {
         this.loanId = loanId;
         this.userId = userId;
         this.userFullName = userFullName;
-        this.bookId = bookId;
         this.bookTitle = bookTitle;
         this.authorName = authorName;
         this.borrowedDate = borrowedDate;
@@ -54,13 +52,6 @@ public class LoanDetailsDTO {
     }
     public void setUserFullName(String userFullName) {
         this.userFullName = userFullName;
-    }
-
-    public Long getBookId() {
-        return bookId;
-    }
-    public void setBookId(Long bookId) {
-        this.bookId = bookId;
     }
 
     public String getBookTitle() {

@@ -1,6 +1,8 @@
 package com.jerry.school_project.service;
 
+import com.jerry.school_project.dto.AuthorDTO;
 import com.jerry.school_project.entity.Author;
+import com.jerry.school_project.mapper.AuthorMapper;
 import com.jerry.school_project.repository.AuthorRepository;
 import com.jerry.school_project.util.Validation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,37 +15,41 @@ import java.util.List;
 public class AuthorService {
     private final AuthorRepository authorRepository;
     private final Validation validation;
+    private final AuthorMapper authorMapper;
 
     @Autowired
-    public AuthorService(AuthorRepository authorRepository, Validation validation) {
+    public AuthorService(AuthorRepository authorRepository, Validation validation, AuthorMapper authorMapper) {
         this.authorRepository = authorRepository;
         this.validation = validation;
+        this.authorMapper = authorMapper;
     }
 
     // Get all authors
-    public List<Author> getAllAuthors() {
+    public List<AuthorDTO> getAllAuthors() {
         try {
-            return authorRepository.findAll();
+            List<Author> authors = authorRepository.findAll();
+            return authorMapper.toAuthorDTOList(authors);
         } catch (Exception e) {
             return new ArrayList<>();
         }
     }
 
     // Find authors by last name
-    public List<Author> findAuthorsByLastName(String lastName) {
+    public List<AuthorDTO> findAuthorsByLastName(String lastName) {
         if (lastName == null || lastName.trim().isEmpty()) {
             throw new IllegalArgumentException("Last name cannot be empty");
         }
 
         try {
-            return authorRepository.findByLastNameContainingIgnoreCase(lastName.trim());
+            List<Author> authors = authorRepository.findByLastNameContainingIgnoreCase(lastName.trim());
+            return authorMapper.toAuthorDTOList(authors);
         } catch (Exception e) {
             throw new RuntimeException("Database error occurred while searching for authors", e);
         }
     }
 
     // Add a new author
-    public Author addAuthor(Author author) {
+    public AuthorDTO addAuthor(Author author) {
         if (author == null) {
             throw new IllegalArgumentException("Author data is required");
         }
@@ -69,7 +75,8 @@ public class AuthorService {
             author.setLastName(lastName);
             author.setNationality(nationality);
 
-            return authorRepository.save(author);
+            Author savedAuthor = authorRepository.save(author);
+            return authorMapper.toAuthorDTO(savedAuthor);
 
         } catch (IllegalArgumentException e) {
             throw e;

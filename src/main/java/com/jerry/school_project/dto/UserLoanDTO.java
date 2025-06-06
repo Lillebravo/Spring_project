@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 // DTO for displaying user loans with book details
 public class UserLoanDTO {
     private Long loanId;
-    private Long bookId;
     private String bookTitle;
     private String authorName;
     private LocalDateTime borrowedDate;
@@ -17,9 +16,8 @@ public class UserLoanDTO {
     public UserLoanDTO() {
     }
 
-    public UserLoanDTO(Long loanId, Long bookId, String bookTitle, String authorName, LocalDateTime borrowedDate, LocalDateTime dueDate, LocalDateTime returnedDate) {
+    public UserLoanDTO(Long loanId, String bookTitle, String authorName, LocalDateTime borrowedDate, LocalDateTime dueDate, LocalDateTime returnedDate) {
         this.loanId = loanId;
-        this.bookId = bookId;
         this.bookTitle = bookTitle;
         this.authorName = authorName;
         this.borrowedDate = borrowedDate;
@@ -35,13 +33,6 @@ public class UserLoanDTO {
     }
     public void setLoanId(Long loanId) {
         this.loanId = loanId;
-    }
-
-    public Long getBookId() {
-        return bookId;
-    }
-    public void setBookId(Long bookId) {
-        this.bookId = bookId;
     }
 
     public String getBookTitle() {
