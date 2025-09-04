@@ -28,11 +28,20 @@ public class User {
     @Column(name = "registration_date")
     private LocalDateTime registrationDate;
 
+    @Column(name = "role")
+    private String role;
+
+    @Column(name = "enabled", columnDefinition = "INTEGER")
+    private int enabled;
+
     // Relationships - One user can have many loans
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Loan> loans;
 
     public User() {
+        this.registrationDate = LocalDateTime.now();
+        this.role = "USER";
+        this.enabled = 1;
     }
 
     public User(String firstName, String lastName, String email, String password) {
@@ -41,6 +50,8 @@ public class User {
         this.email = email;
         this.password = password;
         this.registrationDate = LocalDateTime.now();
+        this.role = "USER";
+        this.enabled = 1;
     }
 
     // Getters and setters
@@ -51,9 +62,7 @@ public class User {
         this.id = id;
     }
 
-    public String getFirstName() {
-        return firstName;
-    }
+    public String getFirstName() { return firstName; }
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
@@ -82,9 +91,10 @@ public class User {
     public LocalDateTime getRegistrationDate() {
         return registrationDate;
     }
-    public void setRegistrationDate(LocalDateTime registrationDate) {
-        this.registrationDate = registrationDate;
-    }
+    public void setRegistrationDate(LocalDateTime registrationDate) { this.registrationDate = registrationDate; }
+
+    public String getRole() { return role; }
+    public void setRole(String role) { this.role = role; }
 
     public List<Loan> getLoans() { return loans; }
     public void setLoans(List<Loan> loans) { this.loans = loans; }
