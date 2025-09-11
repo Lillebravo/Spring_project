@@ -44,6 +44,14 @@ public class User {
         this.enabled = 1;
     }
 
+    public User(String email, String password, String role) {
+        this.email = email;
+        this.password = password;
+        this.role = role;
+        this.registrationDate = LocalDateTime.now();
+        this.enabled = 1;
+    }
+
     public User(String firstName, String lastName, String email, String password) {
         this.firstName = firstName;
         this.lastName = lastName;

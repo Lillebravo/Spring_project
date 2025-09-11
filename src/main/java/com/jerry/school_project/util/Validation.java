@@ -1,6 +1,12 @@
 package com.jerry.school_project.util;
 
+import com.jerry.school_project.entity.User;
+import com.jerry.school_project.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Component
 public class Validation {
@@ -155,5 +161,29 @@ public class Validation {
             default:
                 throw new IllegalArgumentException("Unknown relationship type: " + relationshipType);
         }
+    }
+
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @PostMapping("/api/register")
+    public String registerUser(@RequestParam String username, @RequestParam String password) {
+        if (password.length() < 8) {
+            throw new IllegalArgumentException("Password must be at least 8 characters");
+        }
+        if (!password.matches(".*[A-Ö].*")) {
+            throw new IllegalArgumentException("Password must contain at least one uppercase letter");
+        }
+        if (!password.matches(".*[0-9].*")) {
+            throw new IllegalArgumentException("Password must contain at least one digit");
+        }
+
+        String hashedPassword = passwordEncoder.encode(password);
+        User user = new User(username, hashedPassword, "USER");
+        userRepository.save(user);
+        return "redirect:/login?registered";
+
     }
 }
