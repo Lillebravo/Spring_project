@@ -1,17 +1,19 @@
 package com.jerry.school_project.service;
 
-
 import com.jerry.school_project.PasswordWeakException;
 import com.jerry.school_project.entity.User;
 import com.jerry.school_project.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-
+@Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
+    @Autowired
     private UserRepository userRepository;
 
     @Override
@@ -28,7 +30,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         return user.map(value -> org.springframework.security.core.userdetails.User
                 .withUsername(email)
                 .password(value.getPassword())
-                .authorities("ROLE" + value.getRole()).build()).orElse(null);
+                .authorities("ROLE_" + value.getRole()).build()).orElse(null);
     }
 
 }

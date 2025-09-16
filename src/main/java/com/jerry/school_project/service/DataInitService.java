@@ -38,6 +38,17 @@ public class DataInitService {
             userRepository.save(admin);
         }
 
+        if (userRepository.findByEmail("hejsan@test.com").isEmpty()) {
+            User hejsan = new User();
+            hejsan.setFirstName("hejsan");
+            hejsan.setLastName("hejsanson");
+            hejsan.setEmail("hejsan@test.com");
+            hejsan.setPassword(passwordEncoder.encode("hejsan123"));
+            hejsan.setRole("ADMIN");
+            userRepository.save(hejsan);
+            System.out.println("HEJSAN IS CREATED");
+        }
+
         System.out.println("USER IS CREATED");
         System.out.println("ADMIN IS CREATEDEDEDEDED!");
     }
