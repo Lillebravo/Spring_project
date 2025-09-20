@@ -10,6 +10,11 @@ import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
+/**
+ * JWT Utility Class
+ * Handles JWT token generation, validation, and information extraction
+ * Used for stateless authentication in the application
+ */
 @Component
 public class JwtUtils {
 
@@ -19,9 +24,15 @@ public class JwtUtils {
 
     private int jwtExpirationMs = 1000000; // Ca 16 min session
 
+    /**
+     * Generate JWT token from authenticated user
+     * Creates a signed token containing username and expiration time
+     */
     public String generateJwtToken(Authentication authentication) {
+        // Get user details from authentication object
         UserDetails userPrincipal = (UserDetails) authentication.getPrincipal();
 
+        // Build JWT token with user info and timing
         return Jwts.builder().setSubject(userPrincipal.getUsername())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
@@ -29,25 +40,37 @@ public class JwtUtils {
                 .compact();
     }
 
+    /**
+     * Extract username from JWT token
+     * Parses token and returns the subject (username)
+     */
     public String getUsernameFromJwtToken(String token) {
         return Jwts.parser()
-                .setSigningKey(jwtSecret)
-                .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
+                .setSigningKey(jwtSecret)  // Use secret to verify signature
+                .parseClaimsJws(token)     // Parse and validate token
+                .getBody()                 // Get claims body
+                .getSubject();             // Extract subject (username)
     }
 
+    /**
+     * Extract expiration date from JWT token
+     * Used for determining how long to blacklist tokens on logout
+     */
     public Date getExpirationFromJwtToken(String token) {
         return Jwts.parser()
                 .setSigningKey(jwtSecret)
                 .parseClaimsJws(token)
                 .getBody()
-                .getExpiration();
+                .getExpiration(); // Extract expiration date
     }
 
-
+    /**
+     * Validate JWT token integrity and expiration
+     * Logs specific error types for debugging
+     */
     public boolean validateJwtToken(String authToken) {
         try {
+            // Parse token with secret - will throw exception if invalid
             Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
             return true;
         } catch (SignatureException e) {

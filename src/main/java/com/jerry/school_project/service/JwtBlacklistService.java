@@ -20,7 +20,7 @@ public class JwtBlacklistService {
         Date exp = blacklist.get(token);
         if (exp == null) return false;
 
-        // städa bort gamla tokens
+        // Remove old tokens
         if (exp.before(new Date())) {
             blacklist.remove(token);
             return false;

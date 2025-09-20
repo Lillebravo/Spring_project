@@ -20,6 +20,11 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+/**
+ * JWT Authentication Filter - runs on every HTTP request
+ * Extracts and validates JWT tokens from Authorization header
+ * Sets up Spring Security context if token is valid
+ */
 @Component
 public class AuthTokenFilter extends OncePerRequestFilter {
 
@@ -32,32 +37,42 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthTokenFilter.class);
 
-
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
+            // Extract JWT token from Authorization header
             String jwt = parseJwt(request);
 
+            // Check if token exists, is valid, and not blacklisted
             if (jwt != null && jwtUtils.validateJwtToken(jwt) && !jwtBlacklistService.isTokenBlacklisted(jwt)) {
+                // Get username from token and load user details
                 String username = jwtUtils.getUsernameFromJwtToken(jwt);
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
+                // Create authentication object and set in security context
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         } catch (Exception e) {
+            // Log authentication errors
             LOGGER.error("Cannot set user auth {}", e.getMessage());
         }
 
+        // Continue with the filter chain regardless of authentication result
         filterChain.doFilter(request, response);
     }
 
+    /**
+     * Extract JWT token from Authorization header
+     * Expected format: "Bearer <token>"
+     */
     private String parseJwt(HttpServletRequest request) {
         String headerAuth = request.getHeader("Authorization");
 
         if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
-            return headerAuth.substring(7);
+            return headerAuth.substring(7); // Remove "Bearer " prefix
         }
         return null;
     }

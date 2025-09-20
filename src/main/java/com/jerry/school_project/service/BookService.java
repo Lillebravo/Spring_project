@@ -43,8 +43,14 @@ public class BookService {
             throw new IllegalArgumentException("Search query cannot be empty");
         }
 
+        // Extra SQL injection protection
+        String cleanQuery = query.trim();
+        if (cleanQuery.length() > 100) {
+            throw new IllegalArgumentException("Search query is too long");
+        }
+
         try {
-            List<Book> books = bookRepository.searchBooksByTitleOrAuthor(query.trim());
+            List<Book> books = bookRepository.searchBooksByTitleOrAuthor(cleanQuery);
             return convertBookListToDTO(books);
         } catch (Exception e) {
             throw new RuntimeException("Failed to search books", e);

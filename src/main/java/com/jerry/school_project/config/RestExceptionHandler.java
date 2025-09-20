@@ -12,15 +12,25 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Global exception handler for all REST controllers
+ * Catches unhandled exceptions and returns consistent error responses
+ */
 @ControllerAdvice
 public class RestExceptionHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RestExceptionHandler.class);
 
+    /**
+     * Catches all unhandled exceptions across the application
+     * Returns a standardized 500 Internal Server Error response
+     */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleAllExceptions(Exception ex, HttpServletRequest request) {
+        // Log the exception for debugging and monitoring
         LOGGER.error("Unhandled exception at {} for path {}: {}", Instant.now(), request.getRequestURI(), ex.getMessage());
 
+        // Create standardized error response body
         Map<String, Object> body = new HashMap<>();
         body.put("timestamp", Instant.now());
         body.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
