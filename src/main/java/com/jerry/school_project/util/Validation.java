@@ -163,27 +163,29 @@ public class Validation {
         }
     }
 
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    public void validatePassword(String password) {
+        String fieldName = "Password";
+        // Check that password isn´t null/empty
+        validateString(password, fieldName, true, true, true, null);
 
-    @PostMapping("/api/register")
-    public String registerUser(@RequestParam String username, @RequestParam String password) {
+        // Check length
         if (password.length() < 8) {
-            throw new IllegalArgumentException("Password must be at least 8 characters");
+            throw new IllegalArgumentException(fieldName + " must be at least 8 characters long.");
         }
-        if (!password.matches(".*[A-Ö].*")) {
-            throw new IllegalArgumentException("Password must contain at least one uppercase letter");
+
+        // Check uppercase
+        if (!password.matches(".*[A-ZÅÄÖ].*")) {
+            throw new IllegalArgumentException(fieldName + " must contain at least one uppercase letter.");
         }
+
+        // Check digits
         if (!password.matches(".*[0-9].*")) {
-            throw new IllegalArgumentException("Password must contain at least one digit");
+            throw new IllegalArgumentException(fieldName + " must contain at least one digit.");
         }
 
-        String hashedPassword = passwordEncoder.encode(password);
-        User user = new User(username, hashedPassword, "USER");
-        userRepository.save(user);
-        return "redirect:/login?registered";
-
+        // Check special char
+        if (!password.matches(".*[^A-Za-z0-9ÅÄÖåäö].*")) {
+            throw new IllegalArgumentException(fieldName + " must contain at least one special character.");
+        }
     }
 }

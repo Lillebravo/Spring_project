@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
-// Den här klassen kommer att skapa och validera våra JWT Tokens
 @Component
 public class JwtUtils {
 
@@ -37,6 +36,15 @@ public class JwtUtils {
                 .getBody()
                 .getSubject();
     }
+
+    public Date getExpirationFromJwtToken(String token) {
+        return Jwts.parser()
+                .setSigningKey(jwtSecret)
+                .parseClaimsJws(token)
+                .getBody()
+                .getExpiration();
+    }
+
 
     public boolean validateJwtToken(String authToken) {
         try {

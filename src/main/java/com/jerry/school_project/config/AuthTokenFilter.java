@@ -1,6 +1,6 @@
 package com.jerry.school_project.config;
 
-import com.jerry.school_project.service.CustomUserDetailsService;
+import com.jerry.school_project.service.JwtBlacklistService;
 import com.jerry.school_project.service.UserDetailsServiceImpl;
 import com.jerry.school_project.util.JwtUtils;
 import jakarta.servlet.FilterChain;
@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -26,9 +25,10 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
     @Autowired
     JwtUtils jwtUtils;
-
     @Autowired
     UserDetailsServiceImpl userDetailsService;
+    @Autowired
+    JwtBlacklistService jwtBlacklistService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthTokenFilter.class);
 
@@ -38,7 +38,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         try {
             String jwt = parseJwt(request);
 
-            if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
+            if (jwt != null && jwtUtils.validateJwtToken(jwt) && !jwtBlacklistService.isTokenBlacklisted(jwt)) {
                 String username = jwtUtils.getUsernameFromJwtToken(jwt);
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());

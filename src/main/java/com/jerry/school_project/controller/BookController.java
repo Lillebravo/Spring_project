@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@PreAuthorize("hasRole('ROLE_ADMIN')")
 @RequestMapping("/api/books")
 @CrossOrigin(origins = "*")
 public class BookController {
