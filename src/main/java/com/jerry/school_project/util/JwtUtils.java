@@ -4,6 +4,7 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.SignatureException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -20,9 +21,13 @@ public class JwtUtils {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(JwtUtils.class);
 
-    private String jwtSecret = "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEiYzHnGD6jMfB86l1uMwVGVNMzmLjWnXSg8DkLD+245n2UdYulLV247gWJOrytira17JaJpLPX9f681zkl6/OPA==";
+    // JWT signing secret - loaded from application.properties
+    @Value("${app.jwtSecret}")
+    private String jwtSecret;
 
-    private int jwtExpirationMs = 1000000; // Ca 16 min session
+    // Token expiration time in ms - loaded from application.properties
+    @Value("${app.jwtExpirationMs}")
+    private int jwtExpirationMs;
 
     /**
      * Generate JWT token from authenticated user
